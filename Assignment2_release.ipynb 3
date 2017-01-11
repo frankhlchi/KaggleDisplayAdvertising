@@ -1,0 +1,165 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "collapsed": true
+   },
+   "source": [
+    "# INFO3406 - Introduction to Data Analytics\n",
+    "## Assignment 2 -  Map Reduce"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### ** Instructions **\n",
+    "\n",
+    "#### Kaggle Display Advertising Challenge dataset will be used in this assignment. It contains of 39 features of online ads and information of if each ad was clicked or not over a period of 7 days. The semantic of these features is undisclosed. The overall objective is to determine if an ad will be clicked or not, for a set of query of features.\n",
+    "\n",
+    "#### For this assignment, only 100,000 ads will be used. The dataset should be downloaded according to the instructions in part 1). The first column of *\"dac_sample.txt\"*  indicates if an ad was clicked (=1) or not (=0) while rest of the 39 columns contain feature values. For this assignment you can consider all features are categorical. The values of some of these features have been hashed for anonymization purposes. Note that some features have missing values.\n",
+    "\n",
+    "\n",
+    "\n",
+    "You may view spark stages from\n",
+    "http://localhost:4040/stages/ \n",
+    "\n",
+    "\n",
+    "Some other useful resources/references:\n",
+    "+ [Map-Reduce for Machine Learning on Multicore](http://papers.nips.cc/paper/3150-map-reduce-for-machine-learning-on-multicore.pdf)\n",
+    "+ [Spark RDD](http://www.cs.berkeley.edu/~matei/papers/2010/hotcloud_spark.pdf)\n",
+    "+ [Display Advertising Challenge](https://www.kaggle.com/c/criteo-display-ad-challenge)\n",
+    "+ [MLlib](https://spark.apache.org/docs/1.1.0/mllib-guide.html)\n",
+    "+ [MLlib: Scalable Machine Learning on Spark](http://stanford.edu/~rezab/sparkworkshop/slides/xiangrui.pdf)\n",
+    "+ [Scalable Machine Learning](https://www.edx.org/course/scalable-machine-learning-uc-berkeleyx-cs190-1x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### ** Preparing the dataset **\n",
+    "\n",
+    "#### Import *\"assignment2LoadData.py\"* file to the [*jupyter*  home](http://localhost:8001/tree) folder.  Run the following cell to download the dataset. After you accept the agreement, you can obtain the download URL by right-clicking on the ***\"Download Sample\"*** button and clicking \"Copy link address\" or \"Copy Link Location\", depending on your browser. Paste the URL into the # TODO in the next cell. The file is 8.4 MB compressed (.tar.gz). The script in *\"assignment2LoadData.py\"* will automatically download the file to the virtual machine (VM) and then extract the data."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "# Run this code to view Criteo's agreement\n",
+    "from IPython.lib.display import IFrame\n",
+    "\n",
+    "IFrame(\"http://labs.criteo.com/downloads/2014-kaggle-display-advertising-challenge-dataset/\",\n",
+    "       800, 400)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "url = <TODO>  #It may be similar to 'https://s?-eu-west-1.amazonaws.com/criteo-labs/dac.tar.gz'\n",
+    "\n",
+    "import assignment2LoadData as ld\n",
+    "\n",
+    "ld.extractData(url)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "#Extract\n",
+    "import numpy as np\n",
+    "import os.path\n",
+    "baseDir = os.path.join('data')\n",
+    "inputPath = os.path.join('Assignment2', 'dac_sample.txt')\n",
+    "fileName = os.path.join(baseDir, inputPath)\n",
+    "\n",
+    "partitions = 1\n",
+    "if os.path.isfile(fileName):\n",
+    "    rawData = (sc\n",
+    "               .textFile(fileName, partitions)\n",
+    "               .map(lambda x: x.replace('\\t', ',')))  # work with either ',' or '\\t' separated data\n",
+    "    print 'An example of rawData entry: ', rawData.take(1)\n",
+    "    nData = rawData.count()\n",
+    "    print '\\nrawData count=', nData"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": false
+   },
+   "outputs": [],
+   "source": [
+    "weights = [.9, .1]\n",
+    "seed = 17\n",
+    "# Use randomSplit with weights and seed\n",
+    "rawTrainData, rawTestData = rawData.randomSplit(weights, seed)\n",
+    "# Cache the data\n",
+    "rawTrainData.cache()\n",
+    "rawTestData.cache()\n",
+    "\n",
+    "nTrain = rawTrainData.count()\n",
+    "nTest = rawTestData.count()\n",
+    "print 'rawTrainData count=', nTrain\n",
+    "print 'rawTestData count=', nTest"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### ** Answers **\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "<TODO>"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
